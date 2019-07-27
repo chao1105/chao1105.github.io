@@ -102,7 +102,7 @@ int mkfifo(const char *filename, mode_t mode);</code></pre><p>打开FIFO文件</
     open(const char *path, O_RDONLY | O_NONBLOCK);      //非阻塞
     open(const char *path, O_WRONLY);
     open(const char *path, O_WRONLY | O_NONBLOCK);</code></pre><p>之后就是文件的read,write操作了</p>
-<p>例子:<br><a href="message/read.c">fiforead.c</a><br><a href="message/write.c">fifowrite.c</a></p>
+<p>例子:<br><a href="read.c">fiforead.c</a><br><a href="write.c">fifowrite.c</a></p>
 <h2 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h2><p>结构体规范</p>
 <pre><code>struct my_message{
 long int message_type;              //第一个是消息类型,必须是长整型
@@ -137,7 +137,7 @@ go调c的静态库 必须 将方法写在 .h文件中, 然后#include,  go中才
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://yoursite.com/2019/07/27/message/" data-id="cjyl9w1mg0000v7goob0zqkex" class="article-share-link">Share</a>
+      <a data-url="https://yoursite.com/2019/07/27/message/" data-id="cjyla08oq00009hgo476psdec" class="article-share-link">Share</a>
       
       
     </footer>
@@ -214,7 +214,7 @@ hexo d -g</code></pre><p>至此所有内容就结束完成了!!!</p>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://yoursite.com/2019/07/26/myfirstblog/" data-id="cjyl9w1ml0001v7go5zzjwwx6" class="article-share-link">Share</a>
+      <a data-url="https://yoursite.com/2019/07/26/myfirstblog/" data-id="cjyla08ow00019hgoup6z0oul" class="article-share-link">Share</a>
       
       
     </footer>
