@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://yoursite.com/"/>
-  <updated>2019-07-26T09:30:40.600Z</updated>
+  <updated>2019-07-27T07:59:46.672Z</updated>
   <id>https://yoursite.com/</id>
   
   <author>
@@ -17,11 +17,33 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>my first blog</title>
+    <title>linux 进程间通信方式学习</title>
+    <link href="https://yoursite.com/2019/07/27/message/"/>
+    <id>https://yoursite.com/2019/07/27/message/</id>
+    <published>2019-07-27T07:57:56.000Z</published>
+    <updated>2019-07-27T07:59:46.672Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="linux-进程间通信方式学习"><a href="#linux-进程间通信方式学习" class="headerlink" title="linux 进程间通信方式学习"></a>linux 进程间通信方式学习</h2><hr><h2 id="命名管道-FIFO"><a href="#命名管道-FIFO" class="headerlink" title="命名管道 FIFO"></a>命名管道 FIFO</h2><p>创建命名管道</p><pre><code>#include &lt;sys/types.h&gt;#include &lt;sys/stat.h&gt;int mkfifo(const char *filename, mode_t mode);</code></pre><p>打开FIFO文件</p><pre><code>注意点:   不能以O_RDWR模式打开,会自己读自己的.  传递给open的FIFO的路径名通常打开方式:    open(const char *path, O_RDONLY);                   //阻塞    open(const char *path, O_RDONLY | O_NONBLOCK);      //非阻塞    open(const char *path, O_WRONLY);    open(const char *path, O_WRONLY | O_NONBLOCK);</code></pre><p>之后就是文件的read,write操作了</p><p>例子:<br><a href="../c/fifo/fiforead/read.c">fiforead.c</a><br><a href="../c/fifo/fifowrite/write.c">fifowrite.c</a></p><h2 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h2><p>结构体规范</p><pre><code>struct my_message{long int message_type;              //第一个是消息类型,必须是长整型/* The data you wish to transfer*/};</code></pre><p>函数使用</p><pre><code>创建和访问一个消息队列:     int msgget(key_t key, int msgflg);把消息添加到消息队列中:     int msgsend(int msgid, const void *msg_ptr, size_t msg_sz, int msgflg);从一个消息队列获取消息:     int msgrcv(int msgid, void *msg_ptr, size_t msg_st, long int msgtype, int msgflg);用来控制消息队列:           int msgctl(int msgid, int command, struct msgid_ds *buf);</code></pre><p>使用注意点:</p><pre><code>msgget          key: 消息队列的键值,两个通信进程调用msgget是键值需要一样                msgflag: 权限标志, 可以与IPC_CREAT或操作, 不存在创建,存在返回标识                函数返回值为msgid,消息队列描述符msgsend         msgid: 消息队列描述符                msg_ptr: 消息指针                size_t: 消息大小                msgflg: 0为阻塞,消息队列满时阻塞msgreceive      msgtype: 消息类型  0表示接收第一个消息  &gt;0表示接收类型等于的第一个消息  &lt;0 表示接收类型等于或小于绝对值的第一个消息                msgflg: 0表示阻塞接收msgctl          command: IPC_RMID表示删除消息队列  IPC_SET：如果进程有足够的权限，就把消息列队的当前关联值设置为msgid_ds结构中给出的值  IPC_STAT：把msgid_ds结构中的数据设置为消息队列的当前关联值，即用消息队列的当前关联值覆盖msgid_ds的值</code></pre><p>例子:<br><a href="../c/message/msgsend/msgsend.c">msgsend.c</a><br><a href="../c/message/msgreceive/msgreceive.c">msgreceive.c</a></p><h2 id="CGO-消息队列通信-交叉编译"><a href="#CGO-消息队列通信-交叉编译" class="headerlink" title="CGO 消息队列通信 (交叉编译)"></a>CGO 消息队列通信 (交叉编译)</h2><p>cgo参考: <a href="https://blog.csdn.net/mynameislu/article/details/80080250" target="_blank" rel="noopener">https://blog.csdn.net/mynameislu/article/details/80080250</a></p><pre><code>c静态库生成:    gcc -c hello.c -o hello.o                ar -crv libmyhello.a hello.o    必须lib开头</code></pre><p>注意点:</p><pre><code>如果arm是64位, 交叉编译指令:  CGO_ENABLED=1 GOOS=linux GOARCH=arm64 CC=arm-linux-gnueabihf-gcc go build -o mainc注释与go的import没有空行go调c的静态库 必须 将方法写在 .h文件中, 然后#include,  go中才能调用方法</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;linux-进程间通信方式学习&quot;&gt;&lt;a href=&quot;#linux-进程间通信方式学习&quot; class=&quot;headerlink&quot; title=&quot;linux 进程间通信方式学习&quot;&gt;&lt;/a&gt;linux 进程间通信方式学习&lt;/h2&gt;&lt;hr&gt;
+&lt;h2 id=&quot;命名管道-FIF
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>my first blog - 博客搭建</title>
     <link href="https://yoursite.com/2019/07/26/myfirstblog/"/>
     <id>https://yoursite.com/2019/07/26/myfirstblog/</id>
     <published>2019-07-26T09:16:19.000Z</published>
-    <updated>2019-07-26T09:30:40.600Z</updated>
+    <updated>2019-07-27T08:02:02.326Z</updated>
     
     <content type="html"><![CDATA[<h2 id="Ubuntu下-hexo-github-个人博客的搭建"><a href="#Ubuntu下-hexo-github-个人博客的搭建" class="headerlink" title="Ubuntu下 hexo+github 个人博客的搭建"></a>Ubuntu下 hexo+github 个人博客的搭建</h2><p>引用文章:<br><a href="https://juejin.im/entry/5a574864f265da3e3c6c1217" target="_blank" rel="noopener">https://juejin.im/entry/5a574864f265da3e3c6c1217</a><br><a href="https://www.jianshu.com/p/9b2f2de68838" target="_blank" rel="noopener">https://www.jianshu.com/p/9b2f2de68838</a></p><hr><h2 id="1-安装nodejs-npm"><a href="#1-安装nodejs-npm" class="headerlink" title="1.安装nodejs,npm"></a>1.安装nodejs,npm</h2><pre><code>sudo apt-get install nodejs-legacysudo apt-get install npm</code></pre><p>查看版本</p><pre><code>node -vnpm -v</code></pre><p>如果npm出现问题,可能是node版本过低导致 (安装9.x.x版本方法)</p><pre><code>curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -sudo apt-get install -y nodejs</code></pre><h2 id="2-安装并使用hexo"><a href="#2-安装并使用hexo" class="headerlink" title="2.安装并使用hexo"></a>2.安装并使用hexo</h2><p>安装</p><pre><code>npm install hexo-cli -gnpm install hexo-deployer-git --save</code></pre><p>第一句是安装hexo，第二句是安装hexo部署到git page的deployer，两个都需要安装。</p><pre><code>创建目录    mkdir hexo进入目录    cd hexo初始化      hexo init运行        hexo server</code></pre><p>浏览器输入 <a href="http://0.0.0.0:4000" target="_blank" rel="noopener">http://0.0.0.0:4000</a> 就可以访问到首页</p><h2 id="3-将其部署到github上"><a href="#3-将其部署到github上" class="headerlink" title="3.将其部署到github上"></a>3.将其部署到github上</h2><pre><code>在github上创建项目------你的用户名.github.io</code></pre><p>Ubuntu下配置你的git</p><pre><code>git config --global user.email &quot;you@example.com&quot;git config --global user.name &quot;Your Name&quot;</code></pre><p>生成ssh秘钥</p><pre><code>ssh-keygen -t rsa -C example@163.com (你github作为用户名的邮箱)生成过程一直回车就好查看  less ~/.ssh/id_rsa.pub</code></pre><p>然后将ssh秘钥添加到之前github的创建的项目中</p><h2 id="4-配置hexo-编译-部署"><a href="#4-配置hexo-编译-部署" class="headerlink" title="4.配置hexo,编译,部署"></a>4.配置hexo,编译,部署</h2><p>修改hexo目录下的 _config.yml配置文件</p><pre><code>deploy:    type: git    repo: git@github.com:mocorochio/micorochio.github.io.git (根据你的github项目地址来)    branch: master</code></pre><p>编译部署</p><pre><code>编译 hexo generate  部署 hexo d          </code></pre><p>然后你就可以在 https://你的github用户名.github.io/ 访问刚刚的博客了</p><h2 id="5-修改主题-编写文章"><a href="#5-修改主题-编写文章" class="headerlink" title="5.修改主题,编写文章"></a>5.修改主题,编写文章</h2><h5 id="修改主题"><a href="#修改主题" class="headerlink" title="修改主题"></a>修改主题</h5><p>去hexo官网主题专栏挑选主题,在hexo文件夹下的themes目录中下载主题</p><pre><code>git clone https://github.com/iissnan/hexo-theme-next</code></pre><p>然后在修改hexo下的_config.yml配置文件</p><pre><code>修改参数为：theme: hexo-theme-next</code></pre><p>本地查看</p><pre><code>hexo g  (hexo generate) 编译hexo s  (hexo server)   本地运行</code></pre><p>部署到github上</p><pre><code>hexo cleanhexo g -d</code></pre><h5 id="编写文章"><a href="#编写文章" class="headerlink" title="编写文章"></a>编写文章</h5><p>在source目录下生成.md文件,markdown编辑后,hexo进行编译部署</p><pre><code>hexo n &quot;文章标题&quot;     会在source中生成 .md 文件或者直接在其中创建.md文件然后用markdown进行编辑后编译部署就好了</code></pre><p>删除文章</p><pre><code>在本地source/_posts目录下删除后执行hexo d -g</code></pre><p>至此所有内容就结束完成了!!!</p>]]></content>
     
