@@ -69,6 +69,134 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-pack-deb" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/08/27/pack-deb/" class="article-date">
+  <time datetime="2019-08-27T09:04:06.000Z" itemprop="datePublished">2019-08-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/08/27/pack-deb/">linux下制作deb软件包</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="linux下制作deb软件包"><a href="#linux下制作deb软件包" class="headerlink" title="linux下制作deb软件包"></a>linux下制作deb软件包</h2><p>deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组</p>
+<p>在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。</p>
+<p>####实现<br>1.建立工作目录</p>
+<pre><code>mkdir example
+cd example</code></pre><p>2.创建一个名为EBIAN的目录, 用于存放控制信息</p>
+<pre><code>mkdir DEBIAN
+
+控制信息一般有5个文件:
+    control   用了记录软件标识，版本号，平台，依赖信息等数据；
+    preinst   在解包 data.tar.gz 前运行的脚本；
+    postinst  在解包数据后运行的脚本；
+    prerm     卸载时，在删除文件之前运行的脚本；
+    postrm    在删除文件之后运行的脚本；
+
+一般只需要control文件就好了</code></pre><p>3.编写控制文件</p>
+<pre><code>vi control
+
+例子:　　
+    Package: electronic-wechat
+    Version: 1.4.0-2016.08.24
+    Section: BioInfoServ
+    Priority: optional
+    Depends:
+    Suggests:
+    Architecture: i386
+    Installed-Size: 4096
+    Maintainer: gatieme
+    Provides: bioinfoserv-arb
+    Description: A better WeChat on macOS and Linux. Built with　Electron by Zhongyi Tong
+
+
+vi postinst
+
+例子:
+    #!/bin/sh
+    if [ &quot;$1&quot; = &quot;configure&quot; ]; then
+    /Applications/MobileLog.app/MobileLog -install
+    /bin/launchctl load -wF /System/Library/LaunchDaemons/      com.iXtension.MobileLogDaemon.plist 
+    fi</code></pre><p>4.程序目录构建</p>
+<pre><code>在工程目录example下
+    mkdir opt
+    mkdir -r usr/bin
+    等等
+
+将从/根目录算起的文件地址都放入</code></pre><p>5.构建deb包</p>
+<pre><code>dpkg-deb -b example example-linux-i386.deb</code></pre><p>####dpkg的使用<br>语法</p>
+<pre><code>dpkg(选项)(参数)</code></pre><p>实例</p>
+<pre><code>dpkg -i package.deb     #安装包
+dpkg -r package         #删除包
+dpkg -P package         #删除包（包括配置文件）
+dpkg -L package         #列出与该包关联的文件
+dpkg -l package         #显示该包的版本
+dpkg --unpack package.deb  #解开deb包的内容
+dpkg -S keyword            #搜索所属的包内容
+dpkg -l                    #列出当前已安装的包
+dpkg -c package.deb        #列出deb包的内容
+dpkg --configure package   #配置包</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://yoursite.com/2019/08/27/pack-deb/" data-id="cjztluwyh0003d9goen6chq8l" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-1前端学习" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/08/03/1前端学习/" class="article-date">
+  <time datetime="2019-08-03T10:05:00.000Z" itemprop="datePublished">2019-08-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/08/03/1前端学习/">1前端学习</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://yoursite.com/2019/08/03/1前端学习/" data-id="cjztluwye0001d9goakbt89eg" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-message" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/07/27/message/" class="article-date">
@@ -137,7 +265,7 @@ go调c的静态库 必须 将方法写在 .h文件中, 然后#include,  go中才
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://yoursite.com/2019/07/27/message/" data-id="cjylaecdf0000t9go4h9s0vg8" class="article-share-link">Share</a>
+      <a data-url="https://yoursite.com/2019/07/27/message/" data-id="cjztluwy90000d9goakxdcv35" class="article-share-link">Share</a>
       
       
     </footer>
@@ -214,7 +342,7 @@ hexo d -g</code></pre><p>至此所有内容就结束完成了!!!</p>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://yoursite.com/2019/07/26/myfirstblog/" data-id="cjylaecdj0001t9gogotmgn93" class="article-share-link">Share</a>
+      <a data-url="https://yoursite.com/2019/07/26/myfirstblog/" data-id="cjztluwyg0002d9goe875ul4r" class="article-share-link">Share</a>
       
       
     </footer>
@@ -242,7 +370,7 @@ hexo d -g</code></pre><p>至此所有内容就结束完成了!!!</p>
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li></ul>
     </div>
   </div>
 
@@ -253,6 +381,14 @@ hexo d -g</code></pre><p>至此所有内容就结束完成了!!!</p>
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/08/27/pack-deb/">linux下制作deb软件包</a>
+          </li>
+        
+          <li>
+            <a href="/2019/08/03/1前端学习/">1前端学习</a>
+          </li>
         
           <li>
             <a href="/2019/07/27/message/">linux 进程间通信方式学习</a>

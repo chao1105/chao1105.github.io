@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>linux下制作deb软件包 | 王超的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="linux下制作deb软件包deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组 在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。 ####实现1.建立工作目录 mkdir example cd example2.创建一个名为EBIAN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux下制作deb软件包">
+<meta property="og:url" content="https://yoursite.com/2019/08/27/pack-deb/index.html">
+<meta property="og:site_name" content="王超的博客">
+<meta property="og:description" content="linux下制作deb软件包deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组 在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。 ####实现1.建立工作目录 mkdir example cd example2.创建一个名为EBIAN">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-27T09:05:11.178Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux下制作deb软件包">
+<meta name="twitter:description" content="linux下制作deb软件包deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组 在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。 ####实现1.建立工作目录 mkdir example cd example2.创建一个名为EBIAN">
+  
+    <link rel="alternate" href="/atom.xml" title="王超的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">王超的博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">superwang&#39;s blog</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-pack-deb" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/08/27/pack-deb/" class="article-date">
+  <time datetime="2019-08-27T09:04:06.000Z" itemprop="datePublished">2019-08-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      linux下制作deb软件包
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="linux下制作deb软件包"><a href="#linux下制作deb软件包" class="headerlink" title="linux下制作deb软件包"></a>linux下制作deb软件包</h2><p>deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组</p>
+<p>在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。</p>
+<p>####实现<br>1.建立工作目录</p>
+<pre><code>mkdir example
+cd example</code></pre><p>2.创建一个名为EBIAN的目录, 用于存放控制信息</p>
+<pre><code>mkdir DEBIAN
+
+控制信息一般有5个文件:
+    control   用了记录软件标识，版本号，平台，依赖信息等数据；
+    preinst   在解包 data.tar.gz 前运行的脚本；
+    postinst  在解包数据后运行的脚本；
+    prerm     卸载时，在删除文件之前运行的脚本；
+    postrm    在删除文件之后运行的脚本；
+
+一般只需要control文件就好了</code></pre><p>3.编写控制文件</p>
+<pre><code>vi control
+
+例子:　　
+    Package: electronic-wechat
+    Version: 1.4.0-2016.08.24
+    Section: BioInfoServ
+    Priority: optional
+    Depends:
+    Suggests:
+    Architecture: i386
+    Installed-Size: 4096
+    Maintainer: gatieme
+    Provides: bioinfoserv-arb
+    Description: A better WeChat on macOS and Linux. Built with　Electron by Zhongyi Tong
+
+
+vi postinst
+
+例子:
+    #!/bin/sh
+    if [ &quot;$1&quot; = &quot;configure&quot; ]; then
+    /Applications/MobileLog.app/MobileLog -install
+    /bin/launchctl load -wF /System/Library/LaunchDaemons/      com.iXtension.MobileLogDaemon.plist 
+    fi</code></pre><p>4.程序目录构建</p>
+<pre><code>在工程目录example下
+    mkdir opt
+    mkdir -r usr/bin
+    等等
+
+将从/根目录算起的文件地址都放入</code></pre><p>5.构建deb包</p>
+<pre><code>dpkg-deb -b example example-linux-i386.deb</code></pre><p>####dpkg的使用<br>语法</p>
+<pre><code>dpkg(选项)(参数)</code></pre><p>实例</p>
+<pre><code>dpkg -i package.deb     #安装包
+dpkg -r package         #删除包
+dpkg -P package         #删除包（包括配置文件）
+dpkg -L package         #列出与该包关联的文件
+dpkg -l package         #显示该包的版本
+dpkg --unpack package.deb  #解开deb包的内容
+dpkg -S keyword            #搜索所属的包内容
+dpkg -l                    #列出当前已安装的包
+dpkg -c package.deb        #列出deb包的内容
+dpkg --configure package   #配置包</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://yoursite.com/2019/08/27/pack-deb/" data-id="cjztluwyh0003d9goen6chq8l" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/08/03/1前端学习/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">1前端学习</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/08/27/pack-deb/">linux下制作deb软件包</a>
+          </li>
+        
+          <li>
+            <a href="/2019/08/03/1前端学习/">1前端学习</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/27/message/">linux 进程间通信方式学习</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/26/myfirstblog/">my first blog - 博客搭建</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Super Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

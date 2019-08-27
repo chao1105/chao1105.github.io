@@ -17,7 +17,7 @@ int main()
 	char buffer[4096 + 1];
 	int bytes_read = 0;
 	int bytes_write = 0;
-	//清空缓冲数组
+	//清空缓冲数据
 	memset(buffer, '\0', sizeof(buffer));
  
 	printf("Process %d opening FIFO O_RDONLY\n", getpid());

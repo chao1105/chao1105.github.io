@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://yoursite.com/"/>
-  <updated>2019-07-27T08:48:31.201Z</updated>
+  <updated>2019-08-27T09:05:11.178Z</updated>
   <id>https://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,41 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>linux下制作deb软件包</title>
+    <link href="https://yoursite.com/2019/08/27/pack-deb/"/>
+    <id>https://yoursite.com/2019/08/27/pack-deb/</id>
+    <published>2019-08-27T09:04:06.000Z</published>
+    <updated>2019-08-27T09:05:11.178Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="linux下制作deb软件包"><a href="#linux下制作deb软件包" class="headerlink" title="linux下制作deb软件包"></a>linux下制作deb软件包</h2><p>deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组</p><p>在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。</p><p>####实现<br>1.建立工作目录</p><pre><code>mkdir examplecd example</code></pre><p>2.创建一个名为EBIAN的目录, 用于存放控制信息</p><pre><code>mkdir DEBIAN控制信息一般有5个文件:    control   用了记录软件标识，版本号，平台，依赖信息等数据；    preinst   在解包 data.tar.gz 前运行的脚本；    postinst  在解包数据后运行的脚本；    prerm     卸载时，在删除文件之前运行的脚本；    postrm    在删除文件之后运行的脚本；一般只需要control文件就好了</code></pre><p>3.编写控制文件</p><pre><code>vi control例子:　　    Package: electronic-wechat    Version: 1.4.0-2016.08.24    Section: BioInfoServ    Priority: optional    Depends:    Suggests:    Architecture: i386    Installed-Size: 4096    Maintainer: gatieme    Provides: bioinfoserv-arb    Description: A better WeChat on macOS and Linux. Built with　Electron by Zhongyi Tongvi postinst例子:    #!/bin/sh    if [ &quot;$1&quot; = &quot;configure&quot; ]; then    /Applications/MobileLog.app/MobileLog -install    /bin/launchctl load -wF /System/Library/LaunchDaemons/      com.iXtension.MobileLogDaemon.plist     fi</code></pre><p>4.程序目录构建</p><pre><code>在工程目录example下    mkdir opt    mkdir -r usr/bin    等等将从/根目录算起的文件地址都放入</code></pre><p>5.构建deb包</p><pre><code>dpkg-deb -b example example-linux-i386.deb</code></pre><p>####dpkg的使用<br>语法</p><pre><code>dpkg(选项)(参数)</code></pre><p>实例</p><pre><code>dpkg -i package.deb     #安装包dpkg -r package         #删除包dpkg -P package         #删除包（包括配置文件）dpkg -L package         #列出与该包关联的文件dpkg -l package         #显示该包的版本dpkg --unpack package.deb  #解开deb包的内容dpkg -S keyword            #搜索所属的包内容dpkg -l                    #列出当前已安装的包dpkg -c package.deb        #列出deb包的内容dpkg --configure package   #配置包</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;linux下制作deb软件包&quot;&gt;&lt;a href=&quot;#linux下制作deb软件包&quot; class=&quot;headerlink&quot; title=&quot;linux下制作deb软件包&quot;&gt;&lt;/a&gt;linux下制作deb软件包&lt;/h2&gt;&lt;p&gt;deb 是 Unix 系统(其实主要是 Li
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>1前端学习</title>
+    <link href="https://yoursite.com/2019/08/03/1%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0/"/>
+    <id>https://yoursite.com/2019/08/03/1前端学习/</id>
+    <published>2019-08-03T10:05:00.000Z</published>
+    <updated>2019-08-03T10:05:00.485Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>linux 进程间通信方式学习</title>
