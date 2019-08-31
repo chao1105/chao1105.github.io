@@ -72,21 +72,29 @@
     <article id="post-go-migrate" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/08/31/go-migrate/" class="article-date">
-  <time datetime="2019-08-31T02:42:53.392Z" itemprop="datePublished">2019-08-31</time>
+  <time datetime="2019-08-31T02:41:57.000Z" itemprop="datePublished">2019-08-31</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/08/31/go-migrate/">go-migrate</a>
+    </h1>
+  
+
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <p>##go migrate 实现数据库迁移</p>
-<p>使用go-bindata  和 sql-migrate 搭配实现</p>
+        <h2 id="go-migrate-实现数据库迁移"><a href="#go-migrate-实现数据库迁移" class="headerlink" title="go migrate 实现数据库迁移"></a>go migrate 实现数据库迁移</h2><p>使用go-bindata  和 sql-migrate 搭配实现</p>
 <pre><code>go get -u github.com/jteeuwen/go-bindata
 go get -v github.com/rubenv/sql-migrate</code></pre><hr>
-<p>####起始代码工程目录</p>
-<ul>
+<h4 id="起始代码工程目录"><a href="#起始代码工程目录" class="headerlink" title="起始代码工程目录"></a>起始代码工程目录</h4><ul>
 <li>migration<ul>
 <li>migrations<ul>
 <li>1.init.sql</li>
@@ -185,8 +193,7 @@ func main() {
 -prefix migrations  如果待转换文件路径前缀有 migrations 则，去掉这个前缀, 参考生成的migrations_gen.go源码</code></pre><p>在该目录下执行: </p>
 <pre><code>go generate </code></pre><p>就会生成 migrations_gen.go 文件</p>
 <hr>
-<p>####最终代码工程目录</p>
-<ul>
+<h4 id="最终代码工程目录"><a href="#最终代码工程目录" class="headerlink" title="最终代码工程目录"></a>最终代码工程目录</h4><ul>
 <li><p>migration</p>
 <ul>
 <li>bdata<ul>
@@ -241,7 +248,7 @@ func main() {
       
         <h2 id="linux下制作deb软件包"><a href="#linux下制作deb软件包" class="headerlink" title="linux下制作deb软件包"></a>linux下制作deb软件包</h2><p>deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组</p>
 <p>在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。</p>
-<p>####实现<br>1.建立工作目录</p>
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><p>1.建立工作目录</p>
 <pre><code>mkdir example
 cd example</code></pre><p>2.创建一个名为EBIAN的目录, 用于存放控制信息</p>
 <pre><code>mkdir DEBIAN
@@ -284,7 +291,7 @@ vi postinst
     等等
 
 将从/根目录算起的文件地址都放入</code></pre><p>5.构建deb包</p>
-<pre><code>dpkg-deb -b example example-linux-i386.deb</code></pre><p>####dpkg的使用<br>语法</p>
+<pre><code>dpkg-deb -b example example-linux-i386.deb</code></pre><h4 id="dpkg的使用"><a href="#dpkg的使用" class="headerlink" title="dpkg的使用"></a>dpkg的使用</h4><p>语法</p>
 <pre><code>dpkg(选项)(参数)</code></pre><p>实例</p>
 <pre><code>dpkg -i package.deb     #安装包
 dpkg -r package         #删除包
@@ -495,7 +502,7 @@ hexo d -g</code></pre><p>至此所有内容就结束完成了!!!</p>
       <ul>
         
           <li>
-            <a href="/2019/08/31/go-migrate/">(no title)</a>
+            <a href="/2019/08/31/go-migrate/">go-migrate</a>
           </li>
         
           <li>

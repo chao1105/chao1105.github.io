@@ -5,19 +5,19 @@
   
 
   
-  <title>王超的博客</title>
+  <title>go-migrate | 王超的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="##go migrate 实现数据库迁移 使用go-bindata  和 sql-migrate 搭配实现 go get -u github.com/jteeuwen/go-bindata go get -v github.com/rubenv/sql-migrate ####起始代码工程目录  migration migrations 1.init.sql   main.go     1.ini">
+  <meta name="description" content="go migrate 实现数据库迁移使用go-bindata  和 sql-migrate 搭配实现 go get -u github.com/jteeuwen/go-bindata go get -v github.com/rubenv/sql-migrate 起始代码工程目录 migration migrations 1.init.sql   main.go     1.init.sql 文件">
 <meta property="og:type" content="article">
-<meta property="og:title" content="王超的博客">
+<meta property="og:title" content="go-migrate">
 <meta property="og:url" content="https://yoursite.com/2019/08/31/go-migrate/index.html">
 <meta property="og:site_name" content="王超的博客">
-<meta property="og:description" content="##go migrate 实现数据库迁移 使用go-bindata  和 sql-migrate 搭配实现 go get -u github.com/jteeuwen/go-bindata go get -v github.com/rubenv/sql-migrate ####起始代码工程目录  migration migrations 1.init.sql   main.go     1.ini">
+<meta property="og:description" content="go migrate 实现数据库迁移使用go-bindata  和 sql-migrate 搭配实现 go get -u github.com/jteeuwen/go-bindata go get -v github.com/rubenv/sql-migrate 起始代码工程目录 migration migrations 1.init.sql   main.go     1.init.sql 文件">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-31T02:42:53.392Z">
+<meta property="og:updated_time" content="2019-08-31T02:46:02.459Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="王超的博客">
-<meta name="twitter:description" content="##go migrate 实现数据库迁移 使用go-bindata  和 sql-migrate 搭配实现 go get -u github.com/jteeuwen/go-bindata go get -v github.com/rubenv/sql-migrate ####起始代码工程目录  migration migrations 1.init.sql   main.go     1.ini">
+<meta name="twitter:title" content="go-migrate">
+<meta name="twitter:description" content="go migrate 实现数据库迁移使用go-bindata  和 sql-migrate 搭配实现 go get -u github.com/jteeuwen/go-bindata go get -v github.com/rubenv/sql-migrate 起始代码工程目录 migration migrations 1.init.sql   main.go     1.init.sql 文件">
   
     <link rel="alternate" href="/atom.xml" title="王超的博客" type="application/atom+xml">
   
@@ -71,21 +71,29 @@
         <section id="main"><article id="post-go-migrate" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/08/31/go-migrate/" class="article-date">
-  <time datetime="2019-08-31T02:42:53.392Z" itemprop="datePublished">2019-08-31</time>
+  <time datetime="2019-08-31T02:41:57.000Z" itemprop="datePublished">2019-08-31</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      go-migrate
+    </h1>
+  
+
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <p>##go migrate 实现数据库迁移</p>
-<p>使用go-bindata  和 sql-migrate 搭配实现</p>
+        <h2 id="go-migrate-实现数据库迁移"><a href="#go-migrate-实现数据库迁移" class="headerlink" title="go migrate 实现数据库迁移"></a>go migrate 实现数据库迁移</h2><p>使用go-bindata  和 sql-migrate 搭配实现</p>
 <pre><code>go get -u github.com/jteeuwen/go-bindata
 go get -v github.com/rubenv/sql-migrate</code></pre><hr>
-<p>####起始代码工程目录</p>
-<ul>
+<h4 id="起始代码工程目录"><a href="#起始代码工程目录" class="headerlink" title="起始代码工程目录"></a>起始代码工程目录</h4><ul>
 <li>migration<ul>
 <li>migrations<ul>
 <li>1.init.sql</li>
@@ -184,8 +192,7 @@ func main() {
 -prefix migrations  如果待转换文件路径前缀有 migrations 则，去掉这个前缀, 参考生成的migrations_gen.go源码</code></pre><p>在该目录下执行: </p>
 <pre><code>go generate </code></pre><p>就会生成 migrations_gen.go 文件</p>
 <hr>
-<p>####最终代码工程目录</p>
-<ul>
+<h4 id="最终代码工程目录"><a href="#最终代码工程目录" class="headerlink" title="最终代码工程目录"></a>最终代码工程目录</h4><ul>
 <li><p>migration</p>
 <ul>
 <li>bdata<ul>
@@ -255,7 +262,7 @@ func main() {
       <ul>
         
           <li>
-            <a href="/2019/08/31/go-migrate/">(no title)</a>
+            <a href="/2019/08/31/go-migrate/">go-migrate</a>
           </li>
         
           <li>

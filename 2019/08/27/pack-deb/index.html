@@ -7,17 +7,17 @@
   
   <title>linux下制作deb软件包 | 王超的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="linux下制作deb软件包deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组 在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。 ####实现1.建立工作目录 mkdir example cd example2.创建一个名为EBIAN">
+  <meta name="description" content="linux下制作deb软件包deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组 在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。 实现1.建立工作目录 mkdir example cd example2.创建一个名为EBIAN的目录,">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux下制作deb软件包">
 <meta property="og:url" content="https://yoursite.com/2019/08/27/pack-deb/index.html">
 <meta property="og:site_name" content="王超的博客">
-<meta property="og:description" content="linux下制作deb软件包deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组 在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。 ####实现1.建立工作目录 mkdir example cd example2.创建一个名为EBIAN">
+<meta property="og:description" content="linux下制作deb软件包deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组 在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。 实现1.建立工作目录 mkdir example cd example2.创建一个名为EBIAN的目录,">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-27T09:05:11.178Z">
+<meta property="og:updated_time" content="2019-08-31T03:00:07.389Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux下制作deb软件包">
-<meta name="twitter:description" content="linux下制作deb软件包deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组 在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。 ####实现1.建立工作目录 mkdir example cd example2.创建一个名为EBIAN">
+<meta name="twitter:description" content="linux下制作deb软件包deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组 在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。 实现1.建立工作目录 mkdir example cd example2.创建一个名为EBIAN的目录,">
   
     <link rel="alternate" href="/atom.xml" title="王超的博客" type="application/atom+xml">
   
@@ -92,7 +92,7 @@
       
         <h2 id="linux下制作deb软件包"><a href="#linux下制作deb软件包" class="headerlink" title="linux下制作deb软件包"></a>linux下制作deb软件包</h2><p>deb 是 Unix 系统(其实主要是 Linux )下的安装包，基于 tar 包，因此本身会记录文件的权限(读/写/可执行)以及所有者/用户组</p>
 <p>在安装过程中，该包里的数据会被直接解压到根目录(即 / )，因此在打包之前需要根据文件所在位置设置好相应的文件/目录树。</p>
-<p>####实现<br>1.建立工作目录</p>
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><p>1.建立工作目录</p>
 <pre><code>mkdir example
 cd example</code></pre><p>2.创建一个名为EBIAN的目录, 用于存放控制信息</p>
 <pre><code>mkdir DEBIAN
@@ -135,7 +135,7 @@ vi postinst
     等等
 
 将从/根目录算起的文件地址都放入</code></pre><p>5.构建deb包</p>
-<pre><code>dpkg-deb -b example example-linux-i386.deb</code></pre><p>####dpkg的使用<br>语法</p>
+<pre><code>dpkg-deb -b example example-linux-i386.deb</code></pre><h4 id="dpkg的使用"><a href="#dpkg的使用" class="headerlink" title="dpkg的使用"></a>dpkg的使用</h4><p>语法</p>
 <pre><code>dpkg(选项)(参数)</code></pre><p>实例</p>
 <pre><code>dpkg -i package.deb     #安装包
 dpkg -r package         #删除包
@@ -163,7 +163,7 @@ dpkg --configure package   #配置包</code></pre>
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          (no title)
+          go-migrate
         
       </div>
     </a>
@@ -208,7 +208,7 @@ dpkg --configure package   #配置包</code></pre>
       <ul>
         
           <li>
-            <a href="/2019/08/31/go-migrate/">(no title)</a>
+            <a href="/2019/08/31/go-migrate/">go-migrate</a>
           </li>
         
           <li>
