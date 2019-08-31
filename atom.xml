@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://yoursite.com/"/>
-  <updated>2019-08-27T09:05:11.178Z</updated>
+  <updated>2019-08-31T02:42:53.392Z</updated>
   <id>https://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title></title>
+    <link href="https://yoursite.com/2019/08/31/go-migrate/"/>
+    <id>https://yoursite.com/2019/08/31/go-migrate/</id>
+    <published>2019-08-31T02:42:53.392Z</published>
+    <updated>2019-08-31T02:42:53.392Z</updated>
+    
+    <content type="html"><![CDATA[<p>##go migrate 实现数据库迁移</p><p>使用go-bindata  和 sql-migrate 搭配实现</p><pre><code>go get -u github.com/jteeuwen/go-bindatago get -v github.com/rubenv/sql-migrate</code></pre><hr><p>####起始代码工程目录</p><ul><li>migration<ul><li>migrations<ul><li>1.init.sql</li></ul></li><li>main.go</li></ul></li></ul><hr><h5 id="1-init-sql-文件的内容"><a href="#1-init-sql-文件的内容" class="headerlink" title="1.init.sql 文件的内容"></a>1.init.sql 文件的内容</h5><pre><code>-- +migrate Upcreate table student (    id text primary key,    name varchar(100) unique not null,    description text not null);CREATE TABLE people (id int);-- +migrate Downdrop table student;drop table people;</code></pre><hr><p>每个sql文件都需要有Up  和  Down  两部分<br>在迁移执行时,使用Up的部分, 如果失败进行回滚则执行Down的部分</p><h5 id="main-go文件的内容"><a href="#main-go文件的内容" class="headerlink" title="main.go文件的内容"></a>main.go文件的内容</h5><pre><code>//go:generate go-bindata -prefix migrations -pkg bdata -o bdata/    migrations_gen.go migrationspackage mainimport (    &quot;fmt&quot;    &quot;time&quot;    &quot;test_learn/migration/bdata&quot;    &quot;github.com/pkg/errors&quot;    migrate &quot;github.com/rubenv/sql-migrate&quot;    log &quot;github.com/sirupsen/logrus&quot;    &quot;github.com/jmoiron/sqlx&quot;    _ &quot;github.com/lib/pq&quot;)var g_db *sqlx.DB// OpenDatabase opens the database and performs a ping to make sure the// database is up.func OpenDatabase(dsn string) (*sqlx.DB, error) {    db, err := sqlx.Open(&quot;postgres&quot;, dsn)    if err != nil {        return nil, fmt.Errorf(&quot;database connection error: %s&quot;, err)    }    for {        if err := db.Ping(); err != nil {            log.Errorf(&quot;ping database error, will retry in 2s: %s&quot;, err)            time.Sleep(2 * time.Second)        } else {            break        }    }    return db, nil}func setPostgreSQLConnection() error {    log.Info(&quot;connecting to postgresql&quot;)    db, err := OpenDatabase(&quot;postgres://chao:chao1105@localhost/test?   sslmode=disable&quot;)    if err != nil {        return errors.Wrap(err, &quot;database connection error&quot;)    }    g_db = db    return nil}func runDatabaseMigrations() error {    log.Info(&quot;applying database migrations&quot;)    m := &amp;migrate.AssetMigrationSource{        Asset:    bdata.Asset,        AssetDir: bdata.AssetDir,        Dir:      &quot;&quot;,    }    n, err := migrate.Exec(g_db.DB, &quot;postgres&quot;, m, migrate.Up)    if err != nil {        return errors.Wrap(err, &quot;applying migrations failed&quot;)    }    log.WithField(&quot;count&quot;, n).Info(&quot;migrations applied&quot;)    return nil}func main() {    setPostgreSQLConnection()    err := runDatabaseMigrations()    if err != nil {        log.Error(err)    }}</code></pre><p>最重要的是第一行:<br>//go:generate go-bindata -prefix migrations -pkg bdata -o bdata/    migrations_gen.go migrations</p><pre><code>-pkg 指定了生成的bindata文件包名是 bdata-o bdata/migrations_gen.go 指定了生成bindata文件的位置-prefix migrations  如果待转换文件路径前缀有 migrations 则，去掉这个前缀, 参考生成的migrations_gen.go源码</code></pre><p>在该目录下执行: </p><pre><code>go generate </code></pre><p>就会生成 migrations_gen.go 文件</p><hr><p>####最终代码工程目录</p><ul><li><p>migration</p><ul><li>bdata<ul><li>migrations_gen.go</li></ul></li><li>migrations<ul><li>1.init.sql</li></ul></li><li>main.go</li></ul></li><li><p>   在migrations_gen.go文件中将保存migrations目录下所有sql文件的内容<br>   执行main,将创建表</p></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;##go migrate 实现数据库迁移&lt;/p&gt;
+&lt;p&gt;使用go-bindata  和 sql-migrate 搭配实现&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;go get -u github.com/jteeuwen/go-bindata
+go get -v github.com
+      
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>linux下制作deb软件包</title>

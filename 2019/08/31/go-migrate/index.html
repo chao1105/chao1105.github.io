@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>王超的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="##go migrate 实现数据库迁移 使用go-bindata  和 sql-migrate 搭配实现 go get -u github.com/jteeuwen/go-bindata go get -v github.com/rubenv/sql-migrate ####起始代码工程目录  migration migrations 1.init.sql   main.go     1.ini">
+<meta property="og:type" content="article">
+<meta property="og:title" content="王超的博客">
+<meta property="og:url" content="https://yoursite.com/2019/08/31/go-migrate/index.html">
+<meta property="og:site_name" content="王超的博客">
+<meta property="og:description" content="##go migrate 实现数据库迁移 使用go-bindata  和 sql-migrate 搭配实现 go get -u github.com/jteeuwen/go-bindata go get -v github.com/rubenv/sql-migrate ####起始代码工程目录  migration migrations 1.init.sql   main.go     1.ini">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-31T02:42:53.392Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="王超的博客">
+<meta name="twitter:description" content="##go migrate 实现数据库迁移 使用go-bindata  和 sql-migrate 搭配实现 go get -u github.com/jteeuwen/go-bindata go get -v github.com/rubenv/sql-migrate ####起始代码工程目录  migration migrations 1.init.sql   main.go     1.ini">
+  
+    <link rel="alternate" href="/atom.xml" title="王超的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">王超的博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">superwang&#39;s blog</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-go-migrate" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/08/31/go-migrate/" class="article-date">
+  <time datetime="2019-08-31T02:42:53.392Z" itemprop="datePublished">2019-08-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>##go migrate 实现数据库迁移</p>
+<p>使用go-bindata  和 sql-migrate 搭配实现</p>
+<pre><code>go get -u github.com/jteeuwen/go-bindata
+go get -v github.com/rubenv/sql-migrate</code></pre><hr>
+<p>####起始代码工程目录</p>
+<ul>
+<li>migration<ul>
+<li>migrations<ul>
+<li>1.init.sql</li>
+</ul>
+</li>
+<li>main.go</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h5 id="1-init-sql-文件的内容"><a href="#1-init-sql-文件的内容" class="headerlink" title="1.init.sql 文件的内容"></a>1.init.sql 文件的内容</h5><pre><code>-- +migrate Up
+create table student (
+    id text primary key,
+    name varchar(100) unique not null,
+    description text not null
+);
+
+CREATE TABLE people (id int);
+
+-- +migrate Down
+drop table student;
+drop table people;</code></pre><hr>
+<p>每个sql文件都需要有Up  和  Down  两部分<br>在迁移执行时,使用Up的部分, 如果失败进行回滚则执行Down的部分</p>
+<h5 id="main-go文件的内容"><a href="#main-go文件的内容" class="headerlink" title="main.go文件的内容"></a>main.go文件的内容</h5><pre><code>//go:generate go-bindata -prefix migrations -pkg bdata -o bdata/    migrations_gen.go migrations
+package main
+
+import (
+    &quot;fmt&quot;
+    &quot;time&quot;
+    &quot;test_learn/migration/bdata&quot;
+    &quot;github.com/pkg/errors&quot;
+    migrate &quot;github.com/rubenv/sql-migrate&quot;
+    log &quot;github.com/sirupsen/logrus&quot;
+
+    &quot;github.com/jmoiron/sqlx&quot;
+    _ &quot;github.com/lib/pq&quot;
+)
+
+var g_db *sqlx.DB
+
+// OpenDatabase opens the database and performs a ping to make sure the
+// database is up.
+func OpenDatabase(dsn string) (*sqlx.DB, error) {
+    db, err := sqlx.Open(&quot;postgres&quot;, dsn)
+    if err != nil {
+        return nil, fmt.Errorf(&quot;database connection error: %s&quot;, err)
+    }
+    for {
+        if err := db.Ping(); err != nil {
+            log.Errorf(&quot;ping database error, will retry in 2s: %s&quot;, err)
+            time.Sleep(2 * time.Second)
+        } else {
+            break
+        }
+    }
+    return db, nil
+}
+
+func setPostgreSQLConnection() error {
+    log.Info(&quot;connecting to postgresql&quot;)
+    db, err := OpenDatabase(&quot;postgres://chao:chao1105@localhost/test?   sslmode=disable&quot;)
+    if err != nil {
+        return errors.Wrap(err, &quot;database connection error&quot;)
+    }
+    g_db = db
+    return nil
+}
+
+func runDatabaseMigrations() error {
+    log.Info(&quot;applying database migrations&quot;)
+    m := &amp;migrate.AssetMigrationSource{
+        Asset:    bdata.Asset,
+        AssetDir: bdata.AssetDir,
+        Dir:      &quot;&quot;,
+    }
+    n, err := migrate.Exec(g_db.DB, &quot;postgres&quot;, m, migrate.Up)
+    if err != nil {
+        return errors.Wrap(err, &quot;applying migrations failed&quot;)
+    }
+    log.WithField(&quot;count&quot;, n).Info(&quot;migrations applied&quot;)
+
+    return nil
+}
+
+func main() {
+    setPostgreSQLConnection()
+    err := runDatabaseMigrations()
+    if err != nil {
+        log.Error(err)
+    }
+}</code></pre><p>最重要的是第一行:<br>//go:generate go-bindata -prefix migrations -pkg bdata -o bdata/    migrations_gen.go migrations</p>
+<pre><code>-pkg 指定了生成的bindata文件包名是 bdata
+
+-o bdata/migrations_gen.go 指定了生成bindata文件的位置
+
+-prefix migrations  如果待转换文件路径前缀有 migrations 则，去掉这个前缀, 参考生成的migrations_gen.go源码</code></pre><p>在该目录下执行: </p>
+<pre><code>go generate </code></pre><p>就会生成 migrations_gen.go 文件</p>
+<hr>
+<p>####最终代码工程目录</p>
+<ul>
+<li><p>migration</p>
+<ul>
+<li>bdata<ul>
+<li>migrations_gen.go</li>
+</ul>
+</li>
+<li>migrations<ul>
+<li>1.init.sql</li>
+</ul>
+</li>
+<li>main.go</li>
+</ul>
+</li>
+<li><p>   在migrations_gen.go文件中将保存migrations目录下所有sql文件的内容<br>   执行main,将创建表</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://yoursite.com/2019/08/31/go-migrate/" data-id="cjzyxz2bk000069goot1igwpq" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/08/27/pack-deb/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">linux下制作deb软件包</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/08/31/go-migrate/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/08/27/pack-deb/">linux下制作deb软件包</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/27/message/">linux 进程间通信方式学习</a>
+          </li>
+        
+          <li>
+            <a href="/2019/07/26/myfirstblog/">my first blog - 博客搭建</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Super Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
